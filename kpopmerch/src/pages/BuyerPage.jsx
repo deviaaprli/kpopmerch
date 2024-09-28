@@ -2,6 +2,9 @@
 // import axios from 'axios';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
+import SecondSection from '../components/SecondSection';
+import ThirdSection from '../components/ThirdSection';
+import FourSection from '../components/FourSection';
 import Footer from '../components/Footer';
 
 
@@ -11,6 +14,9 @@ const BuyerPage = () => {
     <div>
       <Navbar />
       <HeroSection />
+      <SecondSection />
+      <ThirdSection />
+      <FourSection />
       <Footer />
     </div>
   );
