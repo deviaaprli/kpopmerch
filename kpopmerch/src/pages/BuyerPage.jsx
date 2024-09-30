@@ -6,7 +6,7 @@ import SecondSection from '../components/SecondSection';
 import ThirdSection from '../components/ThirdSection';
 import FourSection from '../components/FourSection';
 import Footer from '../components/Footer';
-import TambahAlamat from '../components/TambahAlamat';
+// import TambahAlamat from '../components/TambahAlamat';
 
 
 const BuyerPage = () => {
@@ -15,7 +15,6 @@ const BuyerPage = () => {
     <div>
       <Navbar />
       <HeroSection />
-      <TambahAlamat/>
       <SecondSection />
       <ThirdSection />
       <FourSection />

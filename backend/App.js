@@ -414,6 +414,29 @@ app.put('/api/update-alamat/:id', (req, res) => {
   });
 });
 
+// Endpoint untuk menghapus alamat
+app.delete('/api/delete-alamat/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+      DELETE FROM addressdata
+      WHERE address_id = ?
+  `;
+
+  db.query(query, [id], (err, result) => {
+      if (err) {
+          return res.status(500).json({ success: false, message: 'Error deleting address' });
+      }
+
+      if (result.affectedRows > 0) {
+          return res.status(200).json({ success: true, message: 'Address deleted successfully' });
+      } else {
+          return res.status(404).json({ success: false, message: 'Address not found' });
+      }
+  });
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
