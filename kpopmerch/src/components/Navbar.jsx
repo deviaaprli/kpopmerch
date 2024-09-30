@@ -1,12 +1,52 @@
 import React, { useState } from 'react';
-import AuthModal from '../Auth/AuthModal'; // Change this import to AuthModal
+import { useNavigate } from 'react-router-dom';
+import AuthModal from '../Auth/AuthModal'; 
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isLoginActive, setIsLoginActive] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    fetch('http://localhost:5000/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ token }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Telah berhasil logout');
+          localStorage.removeItem('token');
+          setIsLoggedIn(false);
+        } else {
+          console.error('Logout gagal:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  };
 
   const handleCloseModal = () => {
+    setIsLoginActive(false); 
+  };
+
+  const handleLoginSuccess = () => {
+    console.log('Login berhasil!');
+    setIsLoggedIn(true); 
     setIsLoginActive(false); 
   };
 
@@ -30,19 +70,28 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center" style={{ color: "rgba(51, 78, 172, 1)" }}>
-          <button className="text-xl font-medium cursor-pointer mr-6" onClick={() => setIsLoginActive(true)}>
-            Login
-          </button>
+          {isLoggedIn ? (
+            <button className="text-xl font-medium cursor-pointer mr-6" onClick={handleLogout}>
+              Logout
+            </button>
+          ) : (
+            <button className="text-xl font-medium cursor-pointer mr-6" onClick={() => setIsLoginActive(true)}>
+              Login
+            </button>
+          )}
           <i className="fas fa-search text-2xl cursor-pointer mr-6" onClick={() => setIsSearchActive(!isSearchActive)}></i>
           <i className="fas fa-bars text-2xl cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}></i>
           <div className="relative">
             <i className="fas fa-shopping-cart text-2xl cursor-pointer relative">
               <span className="absolute bottom-4 left-5 bg-red-500 text-white text-sm rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </i>
+            {isLoggedIn && (
+              <i className="fas fa-user-circle text-2xl cursor-pointer ml-6" title="Profile" onClick={() => navigate('/profile')}></i>
+            )}
           </div>
         </div>
 
-        {isLoginActive && <AuthModal onClose={handleCloseModal} />}
+        {isLoginActive && <AuthModal onClose={handleCloseModal} onLoginSuccess={handleLoginSuccess} />}
 
         {isSearchActive && (
           <div className="absolute top-full right-0 mt-4 w-1/2 bg-transparent">
