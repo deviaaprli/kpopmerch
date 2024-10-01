@@ -7,18 +7,41 @@ const FloatSignUp = ({ onClose, onLogin }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const validateEmail = (email) => {
+    return email.endsWith('@gmail.com');
+  };
+
   const handleSignUp = () => {
     setError('');
     setSuccess('');
+
+    if (!username || !password || !email) {
+      setError('Semua input harus diisi.');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError('Password harus minimal 8 karakter dan mengandung kombinasi huruf dan angka.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Email harus menggunakan domain @gmail.com.');
+      return;
+    }
 
     const userData = {
       username,
       password,
       email,
-      peran: 'Buyer', 
+      peran: 'Buyer',
     };
 
-    // Send POST request to the backend
     fetch('http://localhost:5000/api/add-user', {
       method: 'POST',
       headers: {
@@ -36,7 +59,7 @@ const FloatSignUp = ({ onClose, onLogin }) => {
       })
       .catch(err => {
         console.error('Error during signup:', err);
-        setError('An error occurred during signup. Please try again.');
+        setError('Terjadi kesalahan saat mendaftar. Silakan coba lagi.');
       });
   };
 
