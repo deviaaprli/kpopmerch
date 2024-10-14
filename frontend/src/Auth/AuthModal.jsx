@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import FloatLogin from '../pages/FloatLogin';
-import FloatSignUp from '../pages/FloatSignUp';
-import FloatResetPassword from '../pages/FloatResetPassword';
+import FloatLogin from '../components/LoginPageComponents/FloatLogin';
+import FloatSignUp from '../components/LoginPageComponents/FloatSignUp';
+import FloatResetPassword from '../components/LoginPageComponents/FloatResetPassword';
 
 const AuthModal = ({ onClose, onLoginSuccess }) => {
   const [isLoginVisible, setIsLoginVisible] = useState(true);
