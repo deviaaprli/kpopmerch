@@ -21,10 +21,10 @@ const Footer = () => {
           <div className="space-y-2 text-center md:text-left">
             <h3 className="text-xl font-medium py-0" style={{ color: "rgba(51, 78, 172, 1)" }}>Contact Info</h3>
             <a href="tel:+6289661187120" className="text-lg block py-2 mt-4" style={{ color: "rgba(51, 78, 172, 1)" }}>
-              <i className="fas fa-phone pr-4" style={{ color: "rgba(51, 78, 172, 1)" }}></i>+62 896 6118 7120
+              <i className="fas fa-phone pr-4" style={{ color: "rgba(51, 78, 172, 1)" }}></i>+62 85156560522
             </a>
             <a href="mailto:kirashkr130103@gmail.com" className="text-lg block py-2 mt-2" style={{ color: "rgba(51, 78, 172, 1)" }}>
-              <i className="fas fa-envelope pr-4" style={{ color: "rgba(51, 78, 172, 1)" }}></i>kirashkr130103@gmail.com
+              <i className="fas fa-envelope pr-4" style={{ color: "rgba(51, 78, 172, 1)" }}></i>Kpopmerch@gmail.com
             </a>
           </div>
         </div>

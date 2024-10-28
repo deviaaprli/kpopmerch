@@ -6,6 +6,8 @@ const FloatLogin = ({ onClose, onSignUp, onResetPassword, onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
+  
+
   const handleLogin = async () => {
     try {
       setError(null);
@@ -16,7 +18,11 @@ const FloatLogin = ({ onClose, onSignUp, onResetPassword, onLoginSuccess }) => {
       });
 
       const token = response.data.token;
+      const userId = response.data.data.user_id;
+
       localStorage.setItem('token', token);
+      localStorage.setItem('user_id', userId);
+      
       onLoginSuccess();
       onClose();
 

@@ -7,8 +7,13 @@ const FloatSignUp = ({ onClose, onLogin }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const validateUsername = (username) => {
+    const usernameRegex = /^[A-Za-z\d]{5,10}$/;
+    return usernameRegex.test(username);
+  };
+
   const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,14}$/;
     return passwordRegex.test(password);
   };
 
@@ -22,6 +27,11 @@ const FloatSignUp = ({ onClose, onLogin }) => {
 
     if (!username || !password || !email) {
       setError('Semua input harus diisi.');
+      return;
+    }
+
+    if (!validateUsername(username)) {
+      setError('Username harus minimal 7 karakter.');
       return;
     }
 

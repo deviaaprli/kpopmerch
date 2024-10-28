@@ -4,7 +4,7 @@ import AuthModal from '../Auth/AuthModal';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoginActive, setIsLoginActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -13,16 +13,23 @@ const Navbar = () => {
   // Check token in localStorage when component mounts
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
+    const user_id = localStorage.getItem('user_id');
+    if (token, user_id) {
       setIsLoggedIn(true); // If token exists, consider user as logged in
     }
   }, []);
 
   const handleLogout = () => {
     const token = localStorage.getItem('token');
+    const user_id = localStorage.getItem('user_id');
+
 
     if (!token) {
       console.error('No token found');
+      return;
+    }
+    if (!user_id) {
+      console.error('No user_id found');
       return;
     }
 
@@ -39,6 +46,7 @@ const Navbar = () => {
         if (data.success) {
           console.log('Logout berhasil');
           localStorage.removeItem('token'); // Remove token on logout
+          localStorage.removeItem('user_id'); // Remove user_id on logout
           setIsLoggedIn(false);
         } else {
           console.error('Logout gagal:', data.message);
@@ -57,6 +65,11 @@ const Navbar = () => {
     console.log('Login berhasil!');
     setIsLoggedIn(true); 
     setIsLoginActive(false); 
+  };
+
+  const handleSearch = () => {
+    console.log('Searching for:', searchQuery);
+    // Implement search functionality
   };
 
   // Close menu when clicked outside of it
@@ -82,22 +95,32 @@ const Navbar = () => {
     <header className="fixed top-0 left-0 right-0 w-full z-50" style={{ backgroundColor: "rgba(208, 227, 255, 1)" }}>
       <div className="flex items-center justify-between px-4 md:px-0 py-3 max-w-screen-xl mx-auto">
         <div className="flex items-center">
-          <a href="#" className="mr-0">
+          <a onClick={() => navigate('/')} className="mr-0">
             <img src="/logo.png" alt="Logo" className="h-11" />
           </a>
-          <h1 className="text-xl font-medium" style={{ color: "rgba(51, 78, 172, 1)" }}>Merch Kpop</h1>
+          <h1 className="text-xl font-medium" style={{ color: "rgba(51, 78, 172, 1)" }} onClick={() => navigate('/')}>Merch Kpop</h1>
         </div>
 
         <nav
           ref={menuRef}  // Attach the ref to the menu element
           className={`fixed md:static top-0 right-0 w-64 h-full bg-white md:bg-transparent md:w-auto md:flex md:items-center transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:translate-x-0 transition-transform`}
         >
-          <a onClick={() => navigate('/')} className="block md:inline-block text-xl font-medium px-6 py-3" style={{ color: "rgba(51, 78, 172, 1)" }}>Home</a>
-          <a href="#aboutus" onClick={() => navigate('')} className="block md:inline-block text-xl font-medium px-6 py-3" style={{ color: "rgba(51, 78, 172, 1)" }}>About Us</a>
-          <a href="#popular" className="block md:inline-block text-xl font-medium px-6 py-3" style={{ color: "rgba(51, 78, 172, 1)" }}>Popular</a>
-          <a href="#product" className="block md:inline-block text-xl font-medium px-6 py-3" style={{ color: "rgba(51, 78, 172, 1)" }}>Product</a>
-          <a href="#contact" className="block md:inline-block text-xl font-medium px-6 py-3" style={{ color: "rgba(51, 78, 172, 1)" }}>Contact</a>
-          <a href="#receipt" className="block md:inline-block text-xl font-medium px-6 py-3" style={{ color: "rgba(51, 78, 172, 1)" }}>Receipt</a>
+          <div className="flex items-center justify-center mt-6 md:mt-0">
+            <input 
+              type="text" 
+              placeholder="Search for products..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full max-w-md h-10 px-4 text-lg rounded-l-lg border border-gray-300 focus:outline-none"
+            />
+            <button 
+              className="h-10 px-4 text-lg text-white rounded-r-lg hover:text-xl transition-all"
+              style={{ backgroundColor: "rgba(51, 78, 172, 1)" }}
+              onClick={handleSearch}
+            >
+              Search
+            </button>
+          </div>
         </nav>
 
         <div className="flex items-center" style={{ color: "rgba(51, 78, 172, 1)" }}>
@@ -110,7 +133,6 @@ const Navbar = () => {
               Login
             </button>
           )}
-          <i className="fas fa-search text-2xl cursor-pointer mr-6" onClick={() => setIsSearchActive(!isSearchActive)}></i>
           <i className="fas fa-bars text-2xl cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}></i>
           <div className="relative">
             <i className="fas fa-shopping-cart text-2xl cursor-pointer relative">
@@ -123,12 +145,6 @@ const Navbar = () => {
         </div>
 
         {isLoginActive && <AuthModal onClose={handleCloseModal} onLoginSuccess={handleLoginSuccess} />}
-
-        {isSearchActive && (
-          <div className="absolute top-full right-0 mt-4 w-1/2 bg-transparent">
-            <input type="search" placeholder="Search..." className="w-full p-2 text-lg bg-white rounded-lg shadow-md" />
-          </div>
-        )}
       </div>
     </header>
   );

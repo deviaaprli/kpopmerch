@@ -276,32 +276,37 @@ app.put('/api/update-user', (req, res) => {
 
 // Endpoint untuk mendapatkan detail alamat berdasarkan user_id
 app.get('/user/:user_id/addresses', (req, res) => {
-    const userId = req.params.user_id;
+  const userId = req.params.user_id;
 
-    const query = `
-        SELECT ad.address_id, ad.nama_penerima, ad.nomor_telepon, ad.provinsi, ad.kota, ad.kecamatan, ad.kelurahan, ad.alamat, ad.kode_pos
-        FROM accountdata ac
-        JOIN addressdata ad ON ac.address_id = ad.address_id
-        WHERE ac.user_id = ?
-    `;
+  const query = `
+      SELECT ad.address_id, ad.nama_penerima, ad.nomor_telepon, ad.provinsi, ad.kota, ad.kecamatan, ad.kelurahan, ad.alamat, ad.kode_pos
+      FROM accountdata ac
+      JOIN addressdata ad ON ac.address_id = ad.address_id
+      WHERE ac.user_id = ?
+  `;
 
-    db.query(query, [userId], (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
+  db.query(query, [userId], (err, result) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ success: false, message: 'Internal Server Error' });
+      }
 
-        if (result.length > 0) {
-            res.json({
-                user_id: userId,
-                address_count: result.length,
-                addresses: result // Mengembalikan semua detail alamat
-            });
-        } else {
-            res.json({ user_id: userId, address_count: 0, addresses: [] });
-        }
-    });
+      if (result.length > 0) {
+          res.json({
+              success: true,
+              data: result, // Matching the frontend's expected structure
+              message: 'Addresses retrieved successfully'
+          });
+      } else {
+          res.json({
+              success: true,
+              data: [],
+              message: 'No addresses found for this user'
+          });
+      }
+  });
 });
+
 
 // Endpoint ALAMAT
 
