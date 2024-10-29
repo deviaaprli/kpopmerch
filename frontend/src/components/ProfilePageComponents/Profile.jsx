@@ -214,27 +214,35 @@ const Profile = () => {
       setError('Semua input harus diisi.');
       return;
     }
-  
-    setError(''); // Reset error if all validations pass
+    
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+      console.error('User ID not found in localStorage');
+      return;
+  }
+    setError('');
   
     const method = isAddModal ? 'POST' : 'PUT';
     const endpoint = isAddModal 
       ? 'http://localhost:5000/api/add-alamat' 
       : `http://localhost:5000/api/update-alamat/${selectedAddress.address_id}`;
   
-    try {
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(selectedAddress),
-      });
+      try {
+        const response = await fetch(endpoint, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...selectedAddress,
+                user_id: userId // Add user_id
+            }),
+        });
   
       const data = await response.json();
       if (data.success) {
         if (isAddModal) {
-          setAddresses(prevAddresses => [...prevAddresses, { ...selectedAddress, address_id: data.address_id }]);
+          setAddresses(prevAddresses => [...prevAddresses, { ...selectedAddress, address_id: data.data.address_id }]);
         } else {
           setAddresses(prevAddresses =>
             prevAddresses.map(address =>

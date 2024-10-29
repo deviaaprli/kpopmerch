@@ -344,6 +344,7 @@ app.get('/api/alamat', (req, res) => {
 // Endpoint untuk menambahkan alamat
 app.post('/api/add-alamat', (req, res) => {
   const {
+      user_id, // user_id diambil dari local storage dan dikirimkan melalui req.body
       nama_penerima,
       nomor_telepon,
       provinsi,
@@ -354,12 +355,13 @@ app.post('/api/add-alamat', (req, res) => {
       kode_pos
   } = req.body;
 
-  const query = `
+  // Query untuk menambahkan alamat baru ke tabel addressdata
+  const queryAddAddress = `
       INSERT INTO addressdata (nama_penerima, nomor_telepon, provinsi, kota, kecamatan, kelurahan, alamat, kode_pos, waktu_dibuat, waktu_diubah)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
   `;
 
-  db.query(query, [nama_penerima, nomor_telepon, provinsi, kota, kecamatan, kelurahan, alamat, kode_pos], (err, result) => {
+  db.query(queryAddAddress, [nama_penerima, nomor_telepon, provinsi, kota, kecamatan, kelurahan, alamat, kode_pos], (err, result) => {
       if (err) {
           return res.status(500).json({
               success: false,
@@ -368,23 +370,42 @@ app.post('/api/add-alamat', (req, res) => {
           });
       }
 
-      res.json({
-          success: true,
-          message: 'Alamat berhasil ditambahkan',
-          data: {
-              address_id: result.insertId,
-              nama_penerima,
-              nomor_telepon,
-              provinsi,
-              kota,
-              kecamatan,
-              kelurahan,
-              alamat,
-              kode_pos
+      const address_id = result.insertId; // Mendapatkan ID alamat baru
+
+      // Query untuk membuat relasi di tabel accountdata
+      const queryLinkAccount = `
+          INSERT INTO accountdata (user_id, address_id)
+          VALUES (?, ?)
+      `;
+
+      db.query(queryLinkAccount, [user_id, address_id], (err) => {
+          if (err) {
+              return res.status(500).json({
+                  success: false,
+                  message: 'Gagal membuat relasi user dan alamat',
+                  error: err.message
+              });
           }
+
+          res.json({
+              success: true,
+              message: 'Alamat berhasil ditambahkan dan dihubungkan ke user',
+              data: {
+                  address_id,
+                  nama_penerima,
+                  nomor_telepon,
+                  provinsi,
+                  kota,
+                  kecamatan,
+                  kelurahan,
+                  alamat,
+                  kode_pos
+              }
+          });
       });
   });
 });
+
 
 // Endpoint untuk mengupdate alamat
 app.put('/api/update-alamat/:id', (req, res) => {

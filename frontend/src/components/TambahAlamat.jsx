@@ -27,14 +27,6 @@ const Profile = () => {
   const [districts, setDistricts] = useState([]);
   const [villages, setVillages] = useState([]);
 
-  const openModalForUpdate = (address) => {
-    setSelectedAddress(address);
-    setSelectedProvince(address.provinsi);
-    setSelectedRegency(address.kota);
-    setSelectedDistrict(address.kecamatan);
-    setModalVisible(true);
-  };
-
   useEffect(() => {
     fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json`)
       .then(response => response.json())

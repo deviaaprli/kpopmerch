@@ -31,12 +31,12 @@ const FloatSignUp = ({ onClose, onLogin }) => {
     }
 
     if (!validateUsername(username)) {
-      setError('Username harus minimal 7 karakter.');
+      setError('Username harus minimal 5 karakter dan maksimal 10 karakter.');
       return;
     }
 
     if (!validatePassword(password)) {
-      setError('Password harus minimal 8 karakter dan mengandung kombinasi huruf dan angka.');
+      setError('Password harus min 8 & max 14 karakter dan mengandung kombinasi huruf dan angka.');
       return;
     }
 

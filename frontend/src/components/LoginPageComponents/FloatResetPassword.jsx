@@ -7,35 +7,52 @@ const FloatResetPassword = ({ onClose, onLogin }) => {
   const [message, setMessage] = useState('');
   const [isEmailChecked, setIsEmailChecked] = useState(false);
 
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,14}$/;
+    return passwordRegex.test(password);
+  };
+
+  const displayMessage = (msg) => {
+    setMessage(msg);
+    setTimeout(() => {
+      setMessage('');
+    }, 5000);
+  };
+
   const checkEmail = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/check-email', { email });
       if (response.data.success) {
-        setMessage('Email terdaftar, silahkan perbarui password.');
+        displayMessage('Email terdaftar, silahkan perbarui password.');
         setIsEmailChecked(true);
       } else {
-        setMessage('Email tidak terdaftar.');
+        displayMessage('Email tidak terdaftar.');
       }
     } catch (error) {
       console.error('Error checking email:', error);
-      setMessage('Terjadi kesalahan saat memeriksa email.');
+      displayMessage('Terjadi kesalahan saat memeriksa email.');
     }
   };
 
   const updatePassword = async () => {
+    if (!validatePassword(newPassword)) {
+      displayMessage('Password harus minimal 8 karakter dan mengandung kombinasi huruf dan angka.');
+      return;
+    }
+
     try {
       const response = await axios.put('http://localhost:5000/api/update-password', { email, password: newPassword });
       if (response.data.success) {
-        setMessage('Password berhasil diperbarui.');
+        displayMessage('Password berhasil diperbarui.');
         setTimeout(() => {
-          onLogin(); 
+          onLogin();
         }, 5000);
       } else {
-        setMessage('Gagal memperbarui password.');
+        displayMessage('Gagal memperbarui password.');
       }
     } catch (error) {
       console.error('Error updating password:', error);
-      setMessage('Terjadi kesalahan saat memperbarui password.');
+      displayMessage('Terjadi kesalahan saat memperbarui password.');
     }
   };
 
